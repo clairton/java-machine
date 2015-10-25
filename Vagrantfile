@@ -18,5 +18,9 @@ Vagrant.configure(2) do |config|
     yum install -y gcc-c++ make
     curl --silent --location https://rpm.nodesource.com/setup | bash -
     yum install -y git java-1.8.0-openjdk-devel.x86_64 nodejs
+    #update node to lastest version
+    npm cache clean -f
+    npm install -g n
+    n stable
   SHELL
 end
