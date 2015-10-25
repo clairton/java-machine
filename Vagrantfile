@@ -15,12 +15,27 @@ Vagrant.configure(2) do |config|
 
 
   config.vm.provision 'shell', inline: <<-SHELL
-    yum install -y gcc-c++ make
+    yum install -y gcc-c++ make git
+
+    #install node
     curl --silent --location https://rpm.nodesource.com/setup | bash -
-    yum install -y git java-1.8.0-openjdk-devel.x86_64 nodejs
+    yum install -y nodejs
     #update node to lastest version
     npm cache clean -f
     npm install -g n
     n stable
+
+    #maven
+    wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+    yum install -y apache-maven
+
+    #install java after maven
+    yum install -y java-1.8.0-openjdk-devel.x86_64
+
+    update-alternatives --set java /usr/lib/jvm/java-1.8.0-openjdk.x86_64/bin/java
+    update-alternatives --set javac /usr/lib/jvm/java-1.8.0-openjdk.x86_64/bin/javac
+
+    #usuario para wilfly
+    #useradd --system \ --comment "WildFly Application Server" \ --create-home --home /opt/wildfly \ --user-group wildfly
   SHELL
 end
