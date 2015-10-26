@@ -1,6 +1,12 @@
 Vagrant.configure(2) do |config|
   config.vm.box = 'puppetlabs/centos-6.6-64-puppet'
 
+  #config.vm.network 'forwarded_port', guest: 8080, host: 8081
+  #config.vm.network 'forwarded_port', guest: 9990, host: 9990
+  #config.vm.network 'forwarded_port', guest: 5432, host: 5432
+  #config.vm.network 'forwarded_port', guest: 4200, host: 4200
+
+  config.vm.network 'private_network', ip: '127.0.0.2'
 
   #config.vm.define :web do |web_config|
     #web_config.vm.network 'private_network', ip: '192.168.50.10'
@@ -42,8 +48,25 @@ Vagrant.configure(2) do |config|
     yum -y install postgresql94-server postgresql94-contrib
     service postgresql-9.4 initdb
     chkconfig postgresql-9.4 on
+    #Create data base
+    #psql -h localhost -p 5432 -U postgres -W postgres << EOF
+    #  CREATE DATABASE test;
+    #EOF
 
-    #usuario para wilfly
-    #useradd --system \ --comment "WildFly Application Server" \ --create-home --home /opt/wildfly \ --user-group wildfly
+    #jboss as
+    wget http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.zip
+    unzip wildfly-8.2.0.Final.zip -d /opt/
+    ln -s /opt/wildfly-8.2.0.Final /opt/wildfly
+    cp /opt/wildfly/bin/init.d/wildfly.conf /etc/default/wildfly.conf
+    cp /opt/wildfly/bin/init.d/wildfly-init-redhat.sh /etc/init.d/wildfly
+    chkconfig --add wildfly
+    chkconfig wildfly on
+    mkdir -p /var/log/wildfly
+    adduser wildfly
+    chown -R wildfly:wildfly /opt/wildfly-8.2.0.Final
+    chown -R wildfly:wildfly /opt/wildfly
+    chown -R wildfly:wildfly /var/log/wildfly
+    chown -R wildfly:wildfly /var/run/wildfly
+    service wildfly start
   SHELL
 end
