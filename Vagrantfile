@@ -49,9 +49,14 @@ Vagrant.configure(2) do |config|
     service postgresql-9.4 initdb
     chkconfig postgresql-9.4 on
     #Create data base
-    #psql -h localhost -p 5432 -U postgres -W postgres << EOF
-    #  CREATE DATABASE test;
-    #EOF
+    cat << EOF | su - postgres -c psql
+      -- Create the database:
+      CREATE DATABASE test WITH OWNER=postgres
+                                        LC_COLLATE='en_US.utf8'
+                                        LC_CTYPE='en_US.utf8'
+                                        ENCODING='UTF8'
+                                        TEMPLATE=template0;
+    EOF
 
     #jboss as
     wget http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.zip
