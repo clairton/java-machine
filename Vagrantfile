@@ -53,7 +53,7 @@ Vagrant.configure(2) do |config|
 
     #jboss as
     wget http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.zip
-    unzip wildfly-8.2.0.Final.zip -d -y /opt/
+    unzip wildfly-8.2.0.Final.zip -d /opt/
     ln -s -f /opt/wildfly-8.2.0.Final /opt/wildfly
     echo 'JAVA_HOME="/usr/lib/jvm/java-1.8.0/"
       JBOSS_HOME="/opt/wildfly"
