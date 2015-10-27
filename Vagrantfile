@@ -50,6 +50,7 @@ Vagrant.configure(2) do |config|
     chkconfig postgresql-9.4 on
     sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres'" > /dev/null
     sudo -u postgres psql -c "CREATE DATABASE test" > /dev/null
+    echo 'sed -i "s/^.*max_prepared_transactions\s*=\s*\(.*\)$/max_prepared_transactions = 100/" /var/lib/pgsql/data/postgresql.conf'
 
     #jboss as
     wget http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.zip
