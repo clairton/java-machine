@@ -29,7 +29,7 @@ Vagrant.configure(2) do |config|
 
     #update node to lastest version
     npm cache clean -f
-    npm install -g n
+    npm install -g n --force
     n stable
 
     #maven repository
@@ -48,22 +48,22 @@ Vagrant.configure(2) do |config|
     yum -y install postgresql94-server postgresql94-contrib
     service postgresql-9.4 initdb
     chkconfig postgresql-9.4 on
-    #Create data base
-    cat << EOF | su - postgres -c psql
-      -- Create the database:
-      CREATE DATABASE test WITH OWNER=postgres
-                                        LC_COLLATE='pt_BR.utf8'
-                                        LC_CTYPE='pt_BR.utf8'
-                                        ENCODING='UTF8'
-                                        TEMPLATE=template0;
-    EOF
+    sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres'" > /dev/null
+    sudo -u postgres psql -c "CREATE DATABASE test" > /dev/null
 
     #jboss as
     wget http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.zip
-    unzip wildfly-8.2.0.Final.zip -d /opt/
-    ln -s /opt/wildfly-8.2.0.Final /opt/wildfly
-    cp /opt/wildfly/bin/init.d/wildfly.conf /etc/default/wildfly.conf
-    cp /opt/wildfly/bin/init.d/wildfly-init-redhat.sh /etc/init.d/wildfly
+    unzip wildfly-8.2.0.Final.zip -d -y /opt/
+    ln -s -f /opt/wildfly-8.2.0.Final /opt/wildfly
+    echo 'JAVA_HOME="/usr/lib/jvm/java-1.8.0/"
+      JBOSS_HOME="/opt/wildfly"
+      JBOSS_USER=wildfly
+      JBOSS_MODE=standalone
+      JBOSS_CONFIG=standalone.xml
+      STARTUP_WAIT=60
+      SHUTDOWN_WAIT=60
+      JBOSS_CONSOLE_LOG="/var/log/wildfly/console.log"' > /etc/default/wildfly.conf
+    cp -f /opt/wildfly/bin/init.d/wildfly-init-redhat.sh /etc/init.d/wildfly
     chkconfig --add wildfly
     chkconfig wildfly on
     mkdir -p /var/log/wildfly
@@ -73,5 +73,8 @@ Vagrant.configure(2) do |config|
     chown -R wildfly:wildfly /var/log/wildfly
     chown -R wildfly:wildfly /var/run/wildfly
     service wildfly start
+    #aplicar path 8.2.1
+    #adicionar jdbc postgres
+    #adicionar datasource
   SHELL
 end
