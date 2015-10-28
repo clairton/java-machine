@@ -77,5 +77,6 @@ Vagrant.configure(2) do |config|
     #aplicar path 8.2.1
     #adicionar jdbc postgres
     #adicionar datasource
+    #fazer deploy em modo debug
   SHELL
 end
